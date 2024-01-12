@@ -51,6 +51,9 @@ jobs:
       
     # Step to apply the Terraform plan
     - name: Terraform Apply
+      run: |
+          export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESS_SECRET }}
@@ -80,6 +83,9 @@ jobs:
       
     # Step to destroy all resources defined in Terraform
     - name: Terraform Destroy
+      run: |
+          export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+          export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESS_SECRET }}
