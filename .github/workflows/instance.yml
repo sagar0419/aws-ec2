@@ -52,8 +52,8 @@ jobs:
     # Step to apply the Terraform plan
     - name: Terraform Apply
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESS_SECRET }}
+        TF_VAR_AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
+        TF_VAR_AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESS_SECRET }}
       run: terraform apply -var instanceName=${{ github.event.inputs.instanceName }} -var awsRegion=${{ github.event.inputs.awsRegion }} -var instanceType=${{ github.event.inputs.instanceType }} -auto-approve
       # working-directory: Terraform
 
@@ -81,7 +81,7 @@ jobs:
     # Step to destroy all resources defined in Terraform
     - name: Terraform Destroy
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESS_SECRET }}
+        TF_VAR_AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
+        TF_VAR_AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESS_SECRET }}
       run: terraform destroy -var instanceName=${{ github.event.inputs.instanceName }} -var awsRegion=${{ github.event.inputs.awsRegion }} -auto-approve
       working-directory: .
