@@ -10,7 +10,7 @@ terraform {
 }
 
 provider "aws" {
-  region     = var.aws_region
+  region     = var.awsRegion
   access_key = var.access_key
   secret_key = var.secret_key
   #   profile = "sagar"
@@ -18,9 +18,9 @@ provider "aws" {
 
 resource "aws_instance" "example_server" {
   ami           = "ami-0c7217cdde317cfec"
-  instance_type = var.instance_type
+  instance_type = var.instanceType
 
   tags = {
-    Name = var.instance_name
+    Name = var.instanceName
   }
 }
