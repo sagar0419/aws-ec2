@@ -19,8 +19,8 @@ on:
         required: true
 # Define jobs to be executed in this workflow
 jobs:
-  # Job for applying (creating or updating) the EKS cluster
-  apply_cluster:
+  # Job for applying (creating or updating) the ec2 instance
+  apply_ec2:
     # Use the latest Ubuntu runner
     runs-on: ubuntu-latest
     
@@ -57,8 +57,8 @@ jobs:
       run: terraform apply -var instanceName=${{ github.event.inputs.instanceName }} -var awsRegion=${{ github.event.inputs.awsRegion }} -var instanceType=${{ github.event.inputs.instanceType }} -auto-approve
       # working-directory: Terraform
 
-  # Job for destroying the EKS cluster
-  destroy_cluster:
+  # Job for destroying the  ec2 instance
+  destroy_instance:
     runs-on: ubuntu-latest
     
     # Only run this job if the action input is "destroy"
