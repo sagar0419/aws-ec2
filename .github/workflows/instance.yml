@@ -37,17 +37,17 @@ jobs:
     # Initialize Terraform (downloads providers, etc.)
     - name: Terraform Init
       run: terraform init
-      working-directory: Terraform  # Where should this command be run?
+      working-directory: .  # Where should this command be run?
       
     # Step to format Terraform code, ensures it's neat
     - name: Terraform Format
       run: terraform fmt
-      working-directory: Terraform
+      working-directory: .
       
     # Step to validate the Terraform code (syntax, values, etc.)
     - name: Terraform Validate
       run: terraform validate
-      working-directory: Terraform
+      working-directory: .
       
     # Step to apply the Terraform plan
     - name: Terraform Apply
@@ -71,11 +71,11 @@ jobs:
         
     - name: Terraform Init
       run: terraform init
-      working-directory: Terraform
+      working-directory: .
       
     - name: Terraform FMT
       run: terraform fmt
-      working-directory: Terraform
+      working-directory: .
       
       
     # Step to destroy all resources defined in Terraform
@@ -84,4 +84,4 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESS_SECRET }}
       run: terraform destroy -var instanceName=${{ github.event.inputs.instanceName }} -var awsRegion=${{ github.event.inputs.awsRegion }} -auto-approve
-      # working-directory: Terraform
+      working-directory: .
