@@ -1,0 +1,87 @@
+# Define the name of the GitHub Action workflow
+name: Create an ec2 instance
+# This workflow is manually triggered using the GitHub Actions UI
+on:
+  workflow_dispatch:
+    # Define inputs that are required for the manual trigger
+    inputs:
+      instanceName:
+        description: 'Name of the AWS Instance'  # What's this input for?
+        required: true  # Is it optional or required?
+      awsRegion:
+        description: 'AWS Region for the instance'
+        required: true
+      instanceType:
+        description: 'AWS instance type'
+        required: true
+      action:
+        description: 'Action to perform (apply/destroy)'
+        required: true
+# Define jobs to be executed in this workflow
+jobs:
+  # Job for applying (creating or updating) the EKS cluster
+  apply_cluster:
+    # Use the latest Ubuntu runner
+    runs-on: ubuntu-latest
+    
+    # Only run this job if the action input is "apply"
+    if: ${{ github.event.inputs.action == 'apply' }}
+    # Define the steps for this job
+    steps:
+    
+    # Step to checkout the code from the repository
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+      
+    # Initialize Terraform (downloads providers, etc.)
+    - name: Terraform Init
+      run: terraform init
+      working-directory: Terraform  # Where should this command be run?
+      
+    # Step to format Terraform code, ensures it's neat
+    - name: Terraform Format
+      run: terraform fmt
+      working-directory: Terraform
+      
+    # Step to validate the Terraform code (syntax, values, etc.)
+    - name: Terraform Validate
+      run: terraform validate
+      working-directory: Terraform
+      
+    # Step to apply the Terraform plan
+    - name: Terraform Apply
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESS_SECRET }}
+      run: terraform apply -var instanceName=${{ github.event.inputs.instanceName }} -var awsRegion=${{ github.event.inputs.awsRegion }} -var instanceType=${{ github.event.inputs.instanceType }} -auto-approve
+      # working-directory: Terraform
+
+  # Job for destroying the EKS cluster
+  destroy_cluster:
+    runs-on: ubuntu-latest
+    
+    # Only run this job if the action input is "destroy"
+    if: ${{ github.event.inputs.action == 'destroy' }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+        
+    - name: Terraform Init
+      run: terraform init
+      working-directory: Terraform
+      
+    - name: Terraform FMT
+      run: terraform fmt
+      working-directory: Terraform
+      
+      
+    # Step to destroy all resources defined in Terraform
+    - name: Terraform Destroy
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESS_SECRET }}
+      run: terraform destroy -var instanceName=${{ github.event.inputs.instanceName }} -var awsRegion=${{ github.event.inputs.awsRegion }} -auto-approve
+      # working-directory: Terraform
