@@ -1,2 +1,1 @@
-access_key=TF_VAR_AWS_ACCESS_KEY
-secret_key=TF_VAR_AWS_SECRET_KEY
+
