@@ -19,7 +19,7 @@ on:
         required: true
 # Define jobs to be executed in this workflow
 jobs:
-  # Job for applying (creating or updating) the ec2 instance
+  # Job for applying the ec2 instance
   apply_ec2:
     # Use the latest Ubuntu runner
     runs-on: ubuntu-latest
@@ -29,7 +29,7 @@ jobs:
     # Define the steps for this job
     steps:
     
-    # Step to checkout the code from the repository
+    # checkout the code from the repository
     - name: Checkout code
       uses: actions/checkout@v2
 
@@ -39,7 +39,7 @@ jobs:
       run: terraform init
       working-directory: .  # Where should this command be run?
       
-    # Step to format Terraform code, ensures it's neat
+    # format Terraform code
     - name: Terraform Format
       run: terraform fmt
       working-directory: .
@@ -56,7 +56,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
     - name: terraform apply
       run: terraform apply -var instanceName=${{ github.event.inputs.instanceName }} -var awsRegion=${{ github.event.inputs.awsRegion }} -var instanceType=${{ github.event.inputs.instanceType }} -auto-approve
-      # working-directory: Terraform
+      working-directory: .
 
   # Job for destroying the  ec2 instance
   destroy_instance:
