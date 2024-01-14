@@ -17,14 +17,14 @@ on:
       action:
         description: 'Action to perform (apply/destroy)'
         required: true
-# Define jobs to be executed in this workflow
+# Jobs to be executed in this workflow
 jobs:
   # Job for applying the ec2 instance
   apply_ec2:
     # Use the latest Ubuntu runner
     runs-on: ubuntu-latest
     
-    # Only run this job if the action input is "apply"
+    # Execute this step only if the action input is "apply"
     if: ${{ github.event.inputs.action == 'apply' }}
     # Define the steps for this job
     steps:
@@ -34,35 +34,32 @@ jobs:
       uses: actions/checkout@v2
 
       
-    # Initialize Terraform (downloads providers, etc.)
+    # Initialize Terraform 
     - name: Terraform Init
       run: terraform init
       working-directory: .  # Where should this command be run?
       
-    # format Terraform code
+    # Format Terraform code
     - name: Terraform Format
       run: terraform fmt
       working-directory: .
       
-    # Step to validate the Terraform code (syntax, values, etc.)
+    # Validate the Terraform code 
     - name: Terraform Validate
       run: terraform validate
       working-directory: .
       
-    # Step to apply the Terraform plan
+    # Apply the Terraform plan
     - name: Terraform vars
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
     - name: terraform apply
       run: terraform apply -var instanceName=${{ github.event.inputs.instanceName }} -var awsRegion=${{ github.event.inputs.awsRegion }} -var instanceType=${{ github.event.inputs.instanceType }} -auto-approve
       working-directory: .
 
-  # Job for destroying the  ec2 instance
+  # Destroying the  ec2 instance
   destroy_instance:
     runs-on: ubuntu-latest
     
-    # Only run this job if the action input is "destroy"
+    # Execute this job only if the action input is "destroy"
     if: ${{ github.event.inputs.action == 'destroy' }}
     
     steps:
@@ -79,11 +76,8 @@ jobs:
       working-directory: .
       
       
-    # Step to destroy all resources defined in Terraform
+    # Destroy all resources 
     - name: Terraform Destroy
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
     - name: terraform apply
       run: terraform destroy -var instanceName=${{ github.event.inputs.instanceName }} -var awsRegion=${{ github.event.inputs.awsRegion }} -auto-approve
       working-directory: .
